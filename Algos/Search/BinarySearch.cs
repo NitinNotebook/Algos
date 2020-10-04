@@ -38,7 +38,7 @@ namespace Algos.Search
 
             return -1;
         }
-        private static int RecursiveSearch(int[] A, int x, int start, int end)
+        public static int RecursiveSearch(int[] A, int x, int start, int end)
         {
             if (end < start) return -1;
 

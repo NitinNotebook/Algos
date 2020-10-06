@@ -16,38 +16,83 @@ namespace Algos.Search
     {
         public static void Test()
         {
-            UnitTest(new int[] { 10, 9, 8, 7, 6 }, 10);
-            UnitTest(new int[] { 1, 2, 3, 4, 5 }, 5);
-            UnitTest(new int[] { 5, 17, 100, 11 }, 100);            
+            UnitTest(new int[] { 1 }, 0);
+            UnitTest(new int[] { 10, 9, 8, 7, 6 }, 0);
+            UnitTest(new int[] { 1, 2, 3, 4, 5 }, 4);
+            UnitTest(new int[] { 5, 17, 100, 11 }, 2);
+            UnitTest(new int[] { 1, 2, 3, 1 }, 2);
+            UnitTest(new int[] { 1, 2, 1, 3, 5, 6, 4 }, 5); //two peaks (1 or 5)            
         }
 
         private static void UnitTest(int[] A, int expected)
         {
-            int result = FindPeak(A);
+            int result = FindPeakElement(A);
             Console.WriteLine($"{result == expected}, {expected}, {result}");
         }
 
-        public static int FindPeak(int[] A)
+        public static int FindPeakElement(int[] nums)
         {
-            if (A == null || A.Length == 0) return -1;
-            int n = A.Length;
-            if (n == 1) return A[0];
-            if (n == 2) return Math.Max(A[0], A[1]);
+            if (nums == null || nums.Length == 0) return -1;
+            
+            if (nums.Length == 1) return 0;
 
-            if (A[0] > A[1])
-                return A[0];
+            int start = 0;
+            int end = nums.Length - 1;
+
+            while (start <= end)
+            {
+                int mid = start + (end - start) / 2;
+
+                if (mid == 0)
+                {
+                    if (nums[mid] >= nums[mid + 1]) return mid;
+
+                    start = mid + 1;
+                }
+                else if (mid == nums.Length - 1)
+                {
+                    if (nums[mid] >= nums[mid - 1]) return mid;
+
+                    end = mid - 1;
+                }
+                else if (nums[mid] >= nums[mid - 1] && nums[mid] >= nums[mid + 1])
+                {
+                    return mid;
+                }
+                else if (nums[mid + 1] > nums[mid])
+                {
+                    start = mid + 1;
+                }
+                else if (nums[mid - 1] > nums[mid])
+                {
+                    end = mid - 1;
+                }
+            }
+
+            return -1;
+        }
+
+        public static int FindPeakElement_On(int[] nums)
+        {
+            if (nums == null || nums.Length == 0) return -1;
+            int n = nums.Length;
+            if (n == 1) return 0;
+            if (n == 2) return nums[0] >= nums[1] ? 0 : 1;
+
+            if (nums[0] > nums[1])
+                return 0;
 
             for (int i = 1; i < n - 1; i++)
             {
                 int prev = i - 1;
                 int next = i + 1;
 
-                if (A[i] > A[prev] && A[i] > A[next])
-                    return A[i];
+                if (nums[i] > nums[prev] && nums[i] > nums[next])
+                    return i;
             }
 
-            if (A[n - 1] > A[n - 2])
-                return A[n - 1];
+            if (nums[n - 1] > nums[n - 2])
+                return n - 1;
 
             return -1; //no peak
         }

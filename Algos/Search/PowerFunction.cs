@@ -6,16 +6,17 @@ namespace Algos.Search
     {
         public static void Test()
         {
-            int x = int.Parse(Console.ReadLine());
+            double x = double.Parse(Console.ReadLine());
             int n = int.Parse(Console.ReadLine());
             Console.WriteLine(Pow(x, n));
         }
 
-        static int Pow(int x, int n)
+        static double Pow(double x, int n)
         {
             if (n == 0) return 1;
 
-            int pow = Pow(x, n / 2);
+            double pow = Pow(x, n / 2);
+
 
             if (n % 2 == 0)
             {
@@ -23,7 +24,10 @@ namespace Algos.Search
             }
             else
             {
-                return x * pow * pow;
+                if (n < 0)
+                    return (1 / x) * pow * pow;
+                else
+                    return x * pow * pow;
             }
         }
 

@@ -6,21 +6,33 @@ namespace Algos.Search
     {
         public static void Test()
         {
+            var nums = new int[] { 3, 1 };
+            SearchTest(nums, 1, 1);
+
             var A = new int[] { 10, 12, 14, 15, 16, 1, 3, 5, 8 };
             int rInd = NumberOfRotations(A);
             Console.WriteLine($"Number Of Rotations in A is {rInd}");
 
             var arrX = new int[] { 10, 1, 3, 16, 6 };
-            foreach (int x in arrX)
+            var arrXExpected = new int[] { 0, 5, 6, 4, -1 };
+            for (int i = 0; i < arrX.Length; i++)
             {
-                int index = Search(A, x);
-                Console.WriteLine($"{x} is at index: {index}");
+                SearchTest(A, arrX[i], arrXExpected[i]);
             }
         }
 
-        public static int Search(int[] A, int x)
+        private static void SearchTest(int[] nums, int target, int expected)
         {
-            int n = A.Length;
+            int result = Search(nums, target);
+            Console.WriteLine($"{expected == result}, target={target}, expected={expected}, result={result}");
+        }
+
+        public static int Search(int[] nums, int target)
+        {
+            if (nums == null || nums.Length == 0) return -1;
+            if (nums.Length == 1) return nums[0] == target ? 0 : -1;
+
+            int n = nums.Length;
             int start = 0;
             int end = n - 1;
 
@@ -28,24 +40,24 @@ namespace Algos.Search
             {
                 int mid = (start + end) / 2;
 
-                if (A[mid] == x) return mid;
+                if (nums[mid] == target) return mid;
 
-                if (A[start] < A[mid]) //left is sorted
+                if (start == mid || nums[start] < nums[mid]) //left is sorted
                 {
-                    if (x >= A[start] && x < A[mid]) //item is in left sorted half.
+                    if (target >= nums[start] && target < nums[mid]) //item is in left sorted half.
                         end = mid - 1;
                     else
                         start = mid + 1;
                 }
-                else if (A[end] > A[mid]) //right is sorted
+                else if (nums[end] > nums[mid]) //right is sorted
                 {
-                    if (x > A[mid] && x <= A[end])
+                    if (target > nums[mid] && target <= nums[end])
                         start = mid + 1;
                     else
                         end = mid - 1;
                 }
                 else
-                    return -2; //array is not sorted
+                    return -1; //array is not sorted
             }
 
             return -1;

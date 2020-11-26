@@ -16,6 +16,8 @@ namespace Algos.Search
     {
         public static void Test()
         {
+            UnitTest(new int[] { 1, 1, 2, 2, 2 }, 4, 2); //initial answer not all students will get allocated
+            UnitTest(new int[] { 2, 3, 4, 5 }, 3, 5); //answer is in left half
             UnitTest(new int[] { 12, 34, 67, 90 }, 2, 113);
             UnitTest(new int[] { 5, 17, 100, 11 }, 4, 100);
         }
@@ -29,7 +31,7 @@ namespace Algos.Search
         public static int Allocate(int[] A, int b)
         {
             //number of students more than number of books, no valid solution
-            if (A == null || A.Length < b) return -1; 
+            if (A == null || A.Length < b) return -1;
 
             int start = 0;
             int end = 0;
@@ -42,22 +44,56 @@ namespace Algos.Search
             }
 
             //number of books equal to number of students, only one solution possible
-            if (A.Length == b) return start; 
+            if (A.Length == b) return start;
 
             while (end >= start)
             {
                 int mid = (start + end) / 2;
-                if (IsValid(A, b, mid))
+                //if (IsValid(A, b, mid))
+                //{
+                //    result = mid;
+                //    end = mid - 1;
+                //}
+                //else
+                //{
+                //    start = mid + 1;
+                //}
+                int sLeft = StudentsLeftAfterAllocation(A, b, mid);
+
+                if (sLeft == 0)
                 {
                     result = mid;
                     end = mid - 1;
                 }
                 else
                 {
-                    start = mid + 1;
+                    if (sLeft < 0)
+                        start = mid + 1;
+                    else
+                        end = mid - 1;
                 }
             }
             return result;
+        }
+
+
+        private static int StudentsLeftAfterAllocation(int[] books, int students, int maxPages)
+        {
+            int pCount = 0;
+
+            for (int i = 0; i < books.Length; i++)
+            {
+                pCount += books[i];
+
+                if (pCount > maxPages)
+                {
+                    pCount = books[i];
+                    students--;
+                    if (students == 0) return -1;
+                }
+            }
+            students--;
+            return students;
         }
 
         private static bool IsValid(int[] books, int students, int maxPages)

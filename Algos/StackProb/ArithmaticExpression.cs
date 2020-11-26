@@ -7,11 +7,12 @@ namespace Algos.StackProb
     {
         public static void Test()
         {
-            UnitTest("5+2", 7);
-            UnitTest("5+2*2", 9);
-            UnitTest("5*2*2", 20);
-            UnitTest("5*2/2+2", 7);
-            UnitTest("50*20/20+20", 70);
+            UnitTest("5 + 2", 7);
+            UnitTest("5 + 2 * 2", 9);
+            UnitTest("5 * 2 + 2", 12);
+            UnitTest("5 * 2 * 2", 20);
+            UnitTest("5 * 2 / 2 + 2", 7);
+            UnitTest("50 * 20 / 20 + 20", 70);
 
             UnitTest_PostFix("5 2 +", 7);
             UnitTest_PostFix("50 20 * 20 / 20 +", 70);
@@ -19,83 +20,102 @@ namespace Algos.StackProb
 
         private static void UnitTest(string expr, int result)
         {
-            int expected = EvaluateInfix(expr);
+            int expected = EvaluateInfix_Precedence(expr);
             Console.WriteLine($"{expected == result}, {expr} = {expected}");
         }
 
         private static bool IsOperator(char valOp)
         {
             return valOp == '*' || valOp == '/' || valOp == '+' || valOp == '-';
-        }
+        }        
 
-        private static string ApplyOperator(string num1, Stack<string> stack, char op)
+        private static string ApplyOperator(string num1, string num2, string op)
         {
             int p1 = int.Parse(num1);
-            int p2 = int.Parse(stack.Pop());
-            if (op == '*')
+            int p2 = int.Parse(num2);
+            if (op == "*")
             {
                 return $"{p1 * p2}";
             }
-            else if (op == '/')
+            else if (op == "/")
             {
                 return $"{p2 / p1}";
             }
-            else if (op == '+')
+            else if (op == "+")
             {
                 return $"{p1 + p2}";
             }
-            else if (op == '-')
+            else if (op == "-")
             {
                 return $"{p1 - p2}";
             }
             throw new Exception("Invalid op");
         }
 
-        public static int EvaluateInfix(string expr)
+        private static int GetOpPrecedence(string op)
         {
-            var stack = new Stack<string>();
-            string prevNumber = "";
-            char lastOperator = '\0';
-            for (int i = 0; i < expr.Length; i++)
+            if (op[0] == '*')
             {
-
-                if (char.IsNumber(expr[i]))
-                {
-                    prevNumber += expr[i];
-                }
-
-                if (!char.IsNumber(expr[i]) || i == expr.Length - 1)
-                {
-                    if (lastOperator == '*' || lastOperator == '/')
-                    {
-                        prevNumber = ApplyOperator(prevNumber, stack, lastOperator);
-                    }
-
-                    stack.Push(prevNumber);
-                    prevNumber = string.Empty;
-                    lastOperator = expr[i];
-
-                    if (lastOperator == '+' || lastOperator == '-')
-                    {
-                        stack.Push(expr[i].ToString());
-                    }
-                }
+                return 3;
             }
-
-            while (stack.Count != 0)
+            else if (op[0] == '/')
             {
-                if (stack.Peek() == "+" || stack.Peek() == "-")
+                return 2;
+            }
+            else if (op[0] == '+')
+            {
+                return 1;
+            }
+            else if (op[0] == '-')
+            {
+                return 0;
+            }
+            throw new Exception("Invalid op");
+        }
+
+        public static int EvaluateInfix_Precedence(string expr)
+        {
+            var arrExpr = expr.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var opStack = new Stack<string>();
+            var stack = new Stack<string>();
+            for (int i = 0; i < arrExpr.Length; i++)
+            {
+                if (arrExpr[i] == "(")
                 {
-                    prevNumber = ApplyOperator(prevNumber, stack, stack.Pop()[0]);
+                    opStack.Push("(");
+                }
+                else if (arrExpr[i] == ")")
+                {
+                    while (opStack.Peek() != "(")
+                    {
+                        var value = ApplyOperator(stack.Pop(), stack.Pop(), opStack.Pop());
+                        stack.Push(value);
+                    }
+                    stack.Pop(); //flush the "(" from stack
+                }
+                else if (IsOperator(arrExpr[i][0]))
+                {
+                    while (opStack.Count > 0 && GetOpPrecedence(arrExpr[i]) < GetOpPrecedence(opStack.Peek()))
+                    {
+                        var value = ApplyOperator(stack.Pop(), stack.Pop(), opStack.Pop());
+                        stack.Push(value);
+                    }
+
+                    opStack.Push(arrExpr[i]);
                 }
                 else
                 {
-                    prevNumber = stack.Pop();
+                    stack.Push(arrExpr[i]);
                 }
             }
-            return int.Parse(prevNumber);
-        }
 
+            while (opStack.Count > 0)
+            {
+                var value = ApplyOperator(stack.Pop(), stack.Pop(), opStack.Pop());
+                stack.Push(value);
+            }
+            return int.Parse(stack.Pop());
+        }
 
         private static void UnitTest_PostFix(string expr, int result)
         {
@@ -111,13 +131,13 @@ namespace Algos.StackProb
             {
                 if (IsOperator(arrExpr[i][0]))
                 {
-                    var prevNumber = ApplyOperator(stack.Pop(), stack, arrExpr[i][0]);
+                    var prevNumber = ApplyOperator(stack.Pop(), stack.Pop(), arrExpr[i]);
                     stack.Push(prevNumber);
                 }
                 else
                 {
                     stack.Push(arrExpr[i]);
-                }                
+                }
             }
 
             return int.Parse(stack.Pop());

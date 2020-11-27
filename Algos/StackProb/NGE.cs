@@ -15,7 +15,7 @@ namespace Algos.StackProb
 
         private static void UnitTest(int[] arr, int[] expected)
         {
-            var result = NextGreatestElement(arr);
+            var result = NextGreatestElement_Approach2(arr);
             Console.WriteLine($"{string.Join(',', result) == string.Join(',', expected)}");
         }
 
@@ -40,6 +40,26 @@ namespace Algos.StackProb
             {
                 nge[stack.Pop()] = -1;
             }
+            return nge;
+        }
+
+
+        public static int[] NextGreatestElement_Approach2(int[] arr)
+        {
+            var nge = new int[arr.Length];
+            var stack = new Stack<int>(nge.Length);
+
+            for (int i = arr.Length - 1; i >= 0; i--)
+            {
+                while (stack.Count > 0 && stack.Peek() < arr[i])
+                {
+                    stack.Pop();
+                }
+
+                nge[i] = stack.Count > 0 ? stack.Peek() : -1;
+                stack.Push(arr[i]);
+            }
+
             return nge;
         }
 

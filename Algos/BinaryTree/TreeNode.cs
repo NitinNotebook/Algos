@@ -62,5 +62,15 @@ namespace Algos.BinaryTree
 
             InOrder(root.right, result);
         }
+
+
+        public static void PreOrder(TreeNode root, List<int> result)
+        {
+            if (root == null) ;
+
+            result.Add(root.val);
+            PreOrder(root.left, result);
+            PreOrder(root.right, result);
+        }
     }
 }

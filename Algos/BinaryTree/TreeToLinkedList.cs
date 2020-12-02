@@ -17,7 +17,7 @@ namespace Algos.BinaryTree
             TreeNode.InOrder(root, lstInOrder);
 
             var converter = new TreeToLinkedList();
-            converter.Convert(root);
+            converter.ConvertInOrder(root);
 
             var lstLinked = new List<int>();
             var llHead = converter.head;
@@ -34,11 +34,11 @@ namespace Algos.BinaryTree
 
         TreeNode head;
         TreeNode tail;
-        public void Convert(TreeNode root)
+        public void ConvertInOrder(TreeNode root)
         {
             if (root == null) return;
 
-            Convert(root.left);
+            ConvertInOrder(root.left);
 
             if (head == null)
             {
@@ -51,7 +51,30 @@ namespace Algos.BinaryTree
             }
             tail = root;
 
-            Convert(root.right);
+            ConvertInOrder(root.right);
         }
+
+        //https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+        private void ConverPreOrder(TreeNode root)
+        {
+            if (root == null) return;
+            TreeNode right = root.right;
+            TreeNode left = root.left;
+            root.left = null;
+            root.left = null;
+            if (head == null)
+            {
+                head = tail = root;                
+            }
+            else
+            {
+                tail.right = root;
+                tail = root;
+            }
+
+            ConverPreOrder(left);
+            ConverPreOrder(right);
+        }
+
     }
 }

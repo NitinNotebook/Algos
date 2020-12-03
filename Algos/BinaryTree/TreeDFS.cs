@@ -60,13 +60,14 @@ namespace Algos.BinaryTree
         {
             if (root == null) return;
 
-            boundary.Add(root.val);
             if (root.left != null)
             {
+                boundary.Add(root.val);
                 LeftBoundary(root.left, boundary);
             }
             else if (root.right != null)
             {
+                boundary.Add(root.val);
                 LeftBoundary(root.right, boundary);
             }
         }
@@ -75,13 +76,14 @@ namespace Algos.BinaryTree
         {
             if (root == null) return;
 
-            boundary.Add(root.val);
             if (root.right != null)
             {
+                boundary.Add(root.val);
                 RightBoundary(root.right, boundary);
             }
             else if (root.left != null)
             {
+                boundary.Add(root.val);
                 RightBoundary(root.left, boundary);
             }
         }

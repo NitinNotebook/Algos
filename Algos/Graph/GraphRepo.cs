@@ -23,6 +23,7 @@ namespace Algos.Graph
                 new SimpleEdge<char>('g', 'f', 2),
                 new SimpleEdge<char>('f', 'e', 10),
                 new SimpleEdge<char>('d', 'f', 14),
+                new SimpleEdge<char>('d', 'e', 9),
                 new SimpleEdge<char>('f', 'e', 10),
             };
 
